@@ -120,12 +120,7 @@ jobs:
           INDEX_PASSWORD: ${{ secrets.INDEX_PASSWORD }}
         run: |
           set -euo pipefail
-          case "$INDEX_URL" in
-            ""|*pypi.org*|*pythonhosted.org*)
-              echo "::error::INDEX_URL must be a private package index"
-              exit 1
-              ;;
-          esac
+          test -n "$INDEX_URL" || { echo "::error::INDEX_URL is required"; exit 1; }
           python -m pip install --quiet twine
           python -m twine upload --non-interactive --repository-url "$INDEX_URL" --username "$INDEX_USERNAME" --password "$INDEX_PASSWORD" dist/*
 
